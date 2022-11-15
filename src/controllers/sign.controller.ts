@@ -59,4 +59,23 @@ async function signin(req: Request, res: Response) {
 	}
 }
 
-export { signup, signin };
+async function signout(req: Request, res: Response) {
+	const { session } = res.locals;
+
+	try {
+		const wasSuccessful = await signService.finishSession(session);
+
+		if (!wasSuccessful) {
+			return reponseHelper.BAD_REQUEST(
+				res,
+				"Não foi possível finalizar sessão."
+			);
+		}
+
+		return reponseHelper.OK(res);
+	} catch (error) {
+		return reponseHelper.SERVER_ERROR(res, error);
+	}
+}
+
+export { signup, signin, signout };

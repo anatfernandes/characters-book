@@ -24,4 +24,22 @@ async function createSession(
 	return !!insertedSession;
 }
 
-export { createUser, findUserByUsername, createSession };
+async function finishSession(session: number): Promise<boolean> {
+	const insertedSession: SessionEntity = await signRepository.finishSession(
+		session
+	);
+
+	return !!insertedSession;
+}
+
+function findSession(token: string): Promise<SessionEntity> {
+	return signRepository.findSession(token);
+}
+
+export {
+	createUser,
+	findUserByUsername,
+	createSession,
+	finishSession,
+	findSession,
+};

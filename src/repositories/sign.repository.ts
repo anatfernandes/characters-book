@@ -19,4 +19,23 @@ function createSession(username: string, token: string) {
 	});
 }
 
-export { createUser, findUserByUsername, createSession };
+function finishSession(session: number) {
+	return prisma.sessions.update({
+		where: { id: session },
+		data: { active: false },
+	});
+}
+
+function findSession(token: string) {
+	return prisma.sessions.findFirst({
+		where: { token, active: true },
+	});
+}
+
+export {
+	createUser,
+	findUserByUsername,
+	createSession,
+	finishSession,
+	findSession,
+};
