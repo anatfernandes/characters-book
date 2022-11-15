@@ -6,11 +6,17 @@ function createUser({ username, password }: User) {
 }
 
 function findUserByUsername(username: string) {
-	return prisma.users.findFirst({
+	return prisma.users.findUnique({
 		where: {
 			username,
 		},
 	});
 }
 
-export { createUser, findUserByUsername };
+function createSession(username: string, token: string) {
+	return prisma.sessions.create({
+		data: { token, users: { connect: { username } } },
+	});
+}
+
+export { createUser, findUserByUsername, createSession };

@@ -1,12 +1,10 @@
-export type NewUser = {
+export type User = {
 	username: string;
 	password: string;
-	confirmPassword: string;
 };
-
-export type User = Omit<NewUser, "confirmPassword">;
 
 export type UserEntity = {
 	id: number;
 	username: string;
+	password: string;
 };

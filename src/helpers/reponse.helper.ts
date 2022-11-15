@@ -1,7 +1,9 @@
 import { Response } from "express";
 
-export function OK(res: Response, message: string = "ok") {
-	return res.status(200).send({ message });
+export function OK(res: Response, message: string | {} = "ok") {
+	const newMessage = typeof message === "string" ? { message } : message;
+
+	return res.status(200).send(newMessage);
 }
 
 export function CREATED(res: Response, message: string = "created") {

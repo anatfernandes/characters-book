@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
-import * as statusCode from "../enums/status.code.enum.js";
+import * as reponseHelper from "../helpers/reponse.helper.js";
 
 export function validateBody(schema: Joi.ObjectSchema<any>) {
 	return (req: Request, res: Response, next: NextFunction) => {
@@ -9,7 +9,7 @@ export function validateBody(schema: Joi.ObjectSchema<any>) {
 		if (validation.error) {
 			const errors = validation.error.details.map(({ message }) => message);
 
-			return statusCode.BAD_REQUEST(res, errors);
+			return reponseHelper.BAD_REQUEST(res, errors);
 		}
 
 		next();
