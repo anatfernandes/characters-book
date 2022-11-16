@@ -75,14 +75,41 @@ async function createCharacter({
 	return null;
 }
 
-async function deleteCharacter(id: number) {
-	await prisma.characters_skills.deleteMany({
+async function deleteCharacterSkills(id: number) {
+	return prisma.characters_skills.deleteMany({
 		where: { character_id: id },
 	});
+}
+
+async function deleteCharacter(id: number) {
+	await deleteCharacterSkills(id);
 
 	return prisma.characters.delete({
 		where: { id },
 	});
+}
+
+async function editCharacter(
+	{ name, description, history, skills }: NewCharacter,
+	id: number
+) {
+	const editedCharacter = await prisma.characters.update({
+		where: { id },
+		data: {
+			name,
+			description,
+			history,
+			edited_at: new Date(),
+		},
+	});
+
+	if (editedCharacter.id) {
+		await deleteCharacterSkills(id);
+
+		return createSkills(skills, id);
+	}
+
+	return null;
 }
 
 export {
@@ -91,4 +118,5 @@ export {
 	findCharacterByName,
 	findCharacterById,
 	deleteCharacter,
+	editCharacter,
 };

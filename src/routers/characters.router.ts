@@ -6,6 +6,7 @@ import {
 	createCharacter,
 	listCharacters,
 	deleteCharacter,
+	editCharacter,
 } from "../controllers/characters.controller.js";
 
 const router = Router();
@@ -14,6 +15,7 @@ router
 	.get("/", listCharacters)
 	.all("/*", validateToken)
 	.post("/", validateBody(characterSchema), createCharacter)
+	.put("/:id", validateBody(characterSchema), editCharacter)
 	.delete("/:id", deleteCharacter);
 
 export default router;

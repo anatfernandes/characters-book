@@ -53,10 +53,23 @@ async function deleteCharacter(id: number): Promise<boolean> {
 	return !!deletedCharacter;
 }
 
+async function editCharacter(
+	data: NewCharacter,
+	skills: string[],
+	id: number
+): Promise<boolean> {
+	data.skills = skills.map((skill) => ({ name: skill.toLowerCase().trim() }));
+
+	const insertedCharacter = await charactersRepository.editCharacter(data, id);
+
+	return !!insertedCharacter;
+}
+
 export {
 	listCharacters,
 	createCharacter,
 	findCharacterByName,
 	findCharacterById,
 	deleteCharacter,
+	editCharacter,
 };
