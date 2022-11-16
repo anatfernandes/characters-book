@@ -1,7 +1,11 @@
-import { CharacterEntity, NewCharacter } from "../protocols/Character.js";
+import {
+	Character,
+	CharacterEntity,
+	NewCharacter,
+} from "../protocols/Character.js";
 import * as charactersRepository from "../repositories/characters.repository.js";
 
-async function listCharacters(): Promise<CharacterEntity[]> {
+async function listCharacters(): Promise<Character[]> {
 	const characters = await charactersRepository.listCharacters();
 
 	const charactersFormated = characters.map((character) => ({
@@ -33,10 +37,26 @@ async function createCharacter(
 	return !!insertedCharacter;
 }
 
-async function findCharacter(name: string): Promise<boolean> {
-	const character = await charactersRepository.findCharacter(name);
+async function findCharacterByName(name: string): Promise<boolean> {
+	const character = await charactersRepository.findCharacterByName(name);
 
 	return !!character;
 }
 
-export { listCharacters, createCharacter, findCharacter };
+function findCharacterById(id: number): Promise<CharacterEntity> {
+	return charactersRepository.findCharacterById(id);
+}
+
+async function deleteCharacter(id: number): Promise<boolean> {
+	const deletedCharacter = await charactersRepository.deleteCharacter(id);
+
+	return !!deletedCharacter;
+}
+
+export {
+	listCharacters,
+	createCharacter,
+	findCharacterByName,
+	findCharacterById,
+	deleteCharacter,
+};

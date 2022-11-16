@@ -23,9 +23,15 @@ function listCharacters() {
 	});
 }
 
-function findCharacter(name: string) {
+function findCharacterByName(name: string) {
 	return prisma.characters.findUnique({
 		where: { name },
+	});
+}
+
+function findCharacterById(id: number) {
+	return prisma.characters.findUnique({
+		where: { id },
 	});
 }
 
@@ -69,4 +75,20 @@ async function createCharacter({
 	return null;
 }
 
-export { listCharacters, createCharacter, findCharacter };
+async function deleteCharacter(id: number) {
+	await prisma.characters_skills.deleteMany({
+		where: { character_id: id },
+	});
+
+	return prisma.characters.delete({
+		where: { id },
+	});
+}
+
+export {
+	listCharacters,
+	createCharacter,
+	findCharacterByName,
+	findCharacterById,
+	deleteCharacter,
+};

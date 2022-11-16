@@ -16,7 +16,9 @@ async function createCharacter(req: Request, res: Response) {
 	const user = res.locals.user;
 
 	try {
-		const hasCharacter = await charactersService.findCharacter(req.body.name);
+		const hasCharacter = await charactersService.findCharacterByName(
+			req.body.name
+		);
 
 		if (hasCharacter) {
 			return reponseHelper.CONFLICT(
@@ -44,4 +46,36 @@ async function createCharacter(req: Request, res: Response) {
 	}
 }
 
-export { listCharacters, createCharacter };
+async function deleteCharacter(req: Request, res: Response) {
+	const user = res.locals.user;
+	const id: number | null = Number(req.params.id) || null;
+
+	if (!id) return reponseHelper.BAD_REQUEST(res);
+
+	try {
+		const character = await charactersService.findCharacterById(id);
+
+		if (!character) {
+			return reponseHelper.NOT_FOUND(res);
+		}
+
+		if (character.by !== user) {
+			return reponseHelper.UNAUTHORIZED(res);
+		}
+
+		const wasSuccessful = await charactersService.deleteCharacter(id);
+
+		if (!wasSuccessful) {
+			return reponseHelper.BAD_REQUEST(
+				res,
+				"Não foi possível apagar personagem."
+			);
+		}
+
+		return reponseHelper.NO_CONTENT(res);
+	} catch (error) {
+		return reponseHelper.SERVER_ERROR(res, error);
+	}
+}
+
+export { listCharacters, createCharacter, deleteCharacter };

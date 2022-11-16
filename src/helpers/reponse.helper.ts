@@ -25,15 +25,19 @@ export function UNAUTHORIZED(res: Response, message: string = "unauthorized") {
 	return res.status(401).send({ message });
 }
 
+export function NOT_FOUND(res: Response, message: string = "not found") {
+	return res.status(404).send({ message });
+}
+
+export function CONFLICT(res: Response, message: string = "conflict") {
+	return res.status(409).send({ message });
+}
+
 export function UNPROCESSABLE_ENTITY(
 	res: Response,
 	message: string = "unprocessable entity"
 ) {
 	return res.status(422).send({ message });
-}
-
-export function CONFLICT(res: Response, message: string = "conflict") {
-	return res.status(409).send({ message });
 }
 
 export function SERVER_ERROR(
