@@ -1,9 +1,28 @@
 import prisma from "../database/database.js";
 import { NewCharacter } from "../protocols/Character.js";
+import { CharacterQuery } from "../protocols/Query.js";
 
-function listCharacters() {
+function listCharacters(query: CharacterQuery) {
 	return prisma.characters.findMany({
-		orderBy: { id: "asc" },
+		where: {
+			name: { startsWith: query.name, mode: "insensitive" },
+			users: {
+				username: {
+					startsWith: query.by,
+					mode: "insensitive",
+				},
+			},
+			characters_skills: {
+				some: {
+					skills: {
+						name: {
+							startsWith: query.skill,
+							mode: "insensitive",
+						},
+					},
+				},
+			},
+		},
 		include: {
 			users: {
 				select: {
@@ -20,12 +39,13 @@ function listCharacters() {
 				},
 			},
 		},
+		orderBy: { id: "asc" },
 	});
 }
 
-function findCharacterByName(name: string) {
-	return prisma.characters.findUnique({
-		where: { name },
+function findCharacterByName(name: string, id?: number) {
+	return prisma.characters.findFirst({
+		where: { OR: { name }, NOT: { id: id || 0 } },
 	});
 }
 
@@ -52,29 +72,6 @@ async function createSkills(skills: { name: string }[], character: number) {
 	return {};
 }
 
-async function createCharacter({
-	name,
-	description,
-	history,
-	by,
-	skills,
-}: NewCharacter) {
-	const insertedCharacter = await prisma.characters.create({
-		data: {
-			name,
-			description,
-			history,
-			by,
-		},
-	});
-
-	if (insertedCharacter.id) {
-		return createSkills(skills, insertedCharacter.id);
-	}
-
-	return null;
-}
-
 async function deleteCharacterSkills(id: number) {
 	return prisma.characters_skills.deleteMany({
 		where: { character_id: id },
@@ -89,24 +86,29 @@ async function deleteCharacter(id: number) {
 	});
 }
 
-async function editCharacter(
-	{ name, description, history, skills }: NewCharacter,
-	id: number
+async function upsertCharacter(
+	{ name, description, history, by, skills }: NewCharacter,
+	characterId: number
 ) {
-	const editedCharacter = await prisma.characters.update({
-		where: { id },
-		data: {
+	const character = await prisma.characters.upsert({
+		where: { id: characterId || 0 },
+		create: {
 			name,
 			description,
 			history,
-			edited_at: new Date(),
+			by,
 		},
+		update: { name, description, history, edited_at: new Date() },
 	});
 
-	if (editedCharacter.id) {
-		await deleteCharacterSkills(id);
+	if (characterId && character.id) {
+		await deleteCharacterSkills(characterId);
 
-		return createSkills(skills, id);
+		return createSkills(skills, characterId);
+	}
+
+	if (character.id) {
+		return createSkills(skills, character.id);
 	}
 
 	return null;
@@ -114,9 +116,8 @@ async function editCharacter(
 
 export {
 	listCharacters,
-	createCharacter,
 	findCharacterByName,
 	findCharacterById,
 	deleteCharacter,
-	editCharacter,
+	upsertCharacter,
 };

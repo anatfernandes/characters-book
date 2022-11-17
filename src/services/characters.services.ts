@@ -1,12 +1,13 @@
+import { CharacterQuery } from "../protocols/Query.js";
+import * as charactersRepository from "../repositories/characters.repository.js";
 import {
 	Character,
 	CharacterEntity,
 	NewCharacter,
 } from "../protocols/Character.js";
-import * as charactersRepository from "../repositories/characters.repository.js";
 
-async function listCharacters(): Promise<Character[]> {
-	const characters = await charactersRepository.listCharacters();
+async function listCharacters(query: CharacterQuery): Promise<Character[]> {
+	const characters = await charactersRepository.listCharacters(query);
 
 	const charactersFormated = characters.map((character) => ({
 		id: character.id,
@@ -22,23 +23,11 @@ async function listCharacters(): Promise<Character[]> {
 	return charactersFormated;
 }
 
-async function createCharacter(
-	data: NewCharacter,
-	skills: string[],
-	by: number
+async function findCharacterByName(
+	name: string,
+	id?: number
 ): Promise<boolean> {
-	data.skills = skills.map((skill) => ({ name: skill.toLowerCase().trim() }));
-
-	const insertedCharacter = await charactersRepository.createCharacter({
-		...data,
-		by,
-	});
-
-	return !!insertedCharacter;
-}
-
-async function findCharacterByName(name: string): Promise<boolean> {
-	const character = await charactersRepository.findCharacterByName(name);
+	const character = await charactersRepository.findCharacterByName(name, id);
 
 	return !!character;
 }
@@ -53,23 +42,34 @@ async function deleteCharacter(id: number): Promise<boolean> {
 	return !!deletedCharacter;
 }
 
-async function editCharacter(
-	data: NewCharacter,
-	skills: string[],
-	id: number
-): Promise<boolean> {
+async function upsertCharacter({
+	data,
+	skills,
+	characterId,
+	user,
+}: NewCharacterData): Promise<boolean> {
 	data.skills = skills.map((skill) => ({ name: skill.toLowerCase().trim() }));
+	data.by = user;
 
-	const insertedCharacter = await charactersRepository.editCharacter(data, id);
+	const character = await charactersRepository.upsertCharacter(
+		data,
+		characterId
+	);
 
-	return !!insertedCharacter;
+	return !!character;
 }
+
+type NewCharacterData = {
+	data: NewCharacter;
+	skills: string[];
+	characterId?: number;
+	user: number;
+};
 
 export {
 	listCharacters,
-	createCharacter,
 	findCharacterByName,
 	findCharacterById,
 	deleteCharacter,
-	editCharacter,
+	upsertCharacter,
 };

@@ -1,10 +1,17 @@
 import { Request, Response } from "express";
 import * as reponseHelper from "../helpers/reponse.helper.js";
+import { CharacterQuery } from "../protocols/Query.js";
 import * as charactersService from "../services/characters.services.js";
 
 async function listCharacters(req: Request, res: Response) {
+	let { name = "", by = "", skill = "" } = req.query as CharacterQuery;
+
 	try {
-		const characters = await charactersService.listCharacters();
+		const characters = await charactersService.listCharacters({
+			name,
+			by,
+			skill,
+		});
 
 		return reponseHelper.OK(res, characters);
 	} catch (error) {
@@ -13,7 +20,7 @@ async function listCharacters(req: Request, res: Response) {
 }
 
 async function createCharacter(req: Request, res: Response) {
-	const user = res.locals.user;
+	const user: number = res.locals.user;
 
 	try {
 		const hasCharacter = await charactersService.findCharacterByName(
@@ -27,11 +34,11 @@ async function createCharacter(req: Request, res: Response) {
 			);
 		}
 
-		const wasSuccessful = await charactersService.createCharacter(
-			req.body,
-			req.body.skills,
-			user
-		);
+		const wasSuccessful = await charactersService.upsertCharacter({
+			data: req.body,
+			skills: req.body.skills,
+			user,
+		});
 
 		if (!wasSuccessful) {
 			return reponseHelper.BAD_REQUEST(
@@ -79,7 +86,7 @@ async function deleteCharacter(req: Request, res: Response) {
 }
 
 async function editCharacter(req: Request, res: Response) {
-	const user = res.locals.user;
+	const user: number = res.locals.user;
 	const id: number | null = Number(req.params.id) || null;
 
 	if (!id) return reponseHelper.BAD_REQUEST(res);
@@ -96,7 +103,8 @@ async function editCharacter(req: Request, res: Response) {
 		}
 
 		const characterWithName = await charactersService.findCharacterByName(
-			req.body.name
+			req.body.name,
+			id
 		);
 
 		if (characterWithName) {
@@ -106,11 +114,12 @@ async function editCharacter(req: Request, res: Response) {
 			);
 		}
 
-		const wasSuccessful = await charactersService.editCharacter(
-			req.body,
-			req.body.skills,
-			id
-		);
+		const wasSuccessful = await charactersService.upsertCharacter({
+			data: req.body,
+			skills: req.body.skills,
+			characterId: id,
+			user,
+		});
 
 		if (!wasSuccessful) {
 			return reponseHelper.BAD_REQUEST(
