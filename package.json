@@ -9,7 +9,8 @@
 		"dev": "npx nodemon src/server.ts",
 		"postinstall": "tsc",
 		"dev:migration:run": "npx prisma migrate dev",
-		"dev:migration:reset": "npx prisma migrate reset"
+		"dev:migration:reset": "npx prisma migrate reset",
+		"dev:seed": "npx prisma db seed"
 	},
 	"prisma": {
 		"seed": "ts-node prisma/seed.ts"
