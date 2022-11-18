@@ -7,7 +7,12 @@
 	"scripts": {
 		"start": "node dist/server.js",
 		"dev": "npx nodemon src/server.ts",
-		"postinstall": "tsc"
+		"postinstall": "tsc",
+		"dev:migration:run": "npx prisma migrate dev",
+		"dev:migration:reset": "npx prisma migrate reset"
+	},
+	"prisma": {
+		"seed": "ts-node prisma/seed.ts"
 	},
 	"repository": {
 		"type": "git",
