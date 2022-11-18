@@ -188,14 +188,14 @@ Characters Book é uma api para a criação e compartilhamento de personagens, s
 > npm run migration:reset
 >```
 
-5. Popule o banco de dados:
+6. (opcional) Popule o banco de dados:
 >```ruby
 > npm run seed
 >```
 
-6. Inicie o projeto:
+7. Inicie o projeto:
 >```ruby
 > npm run dev
 >```
 
-7. Divirta-se nas rotas usando de URL base: http://localhost:porta_definida_no_env
+8. Divirta-se nas rotas usando de URL base: http://localhost:porta_definida_no_env
