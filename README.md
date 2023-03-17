@@ -19,6 +19,8 @@
 
 # Sobre
 Characters Book é uma api para a criação e compartilhamento de personagens, seja para um livro de romance, seja para um RPG.
+<br />
+**Nota:** esse projeto é uma PoC de Prisma ORM.
 
 <br/>
 
