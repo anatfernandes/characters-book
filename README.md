@@ -1,5 +1,7 @@
 # :busts_in_silhouette: Characters Book backend
 
+![Badge Finalizado](https://img.shields.io/static/v1?label=STATUS&message=FINALIZADO&color=success&style=for-the-badge)
+
 # Índice
 
 - [Sobre](#Sobre)
@@ -18,7 +20,7 @@
 <br/>
 
 # Sobre
-Characters Book é uma api para a criação e compartilhamento de personagens, seja para um livro de romance, seja para um RPG.
+Characters Book é uma api para a criação e compartilhamento de personagens, seja para um livro de terror, seja para um RPG.
 <br />
 **Nota:** esse projeto é uma PoC de Prisma ORM.
 
@@ -170,7 +172,7 @@ Characters Book é uma api para a criação e compartilhamento de personagens, s
 
 1. Clone esse repositório:
 >```ruby
-> git clone https://github.com/AnaLTFernandes/characters-book.git
+> git clone https://github.com/anatfernandes/characters-book.git
 >```
 
 2. Instale as dependências:
